@@ -69,7 +69,10 @@ def mainMenu(user, cart, inventory, history):
 
         elif(option == "3"):
             cart.displayCart()
-        
+
+        elif(option == "4"):
+            history.displayOrderHistory(user)
+            
         ## incorrect menu option
         else:
             print("That's not a menu option. Please try again.")
