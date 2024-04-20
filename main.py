@@ -61,7 +61,15 @@ def mainMenu(user, cart, inventory, history):
             user.logout()
 
             print("Successful logout.")
+        elif(option == "1"):
+            user.displayAccountInfo()
 
+        elif(option == "2"):
+            inventory.displayInventory()
+
+        elif(option == "3"):
+            cart.displayCart()
+        
         ## incorrect menu option
         else:
             print("That's not a menu option. Please try again.")
