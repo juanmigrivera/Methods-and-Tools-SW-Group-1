@@ -26,7 +26,11 @@ class Cart:
             else:
                 print("Your cart is empty.")
         except sqlite3.Error as e:
-            print("An error occurred: {e}")
+            print(f"An error occurred: {e}")
             
    def addtoCart(self, ISBN, quantity):
        try:
+            # Check if the item is available in the inventory
+            check_inventory = "SELECT quantity FROM inventory WHERE ISBN = ?"
+            self.cursor.execute(check_inventory, (ISBN,))
+            inventory_quantity = self.cursor.fetchone()
