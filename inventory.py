@@ -66,6 +66,15 @@ class Inventory:
                 print("Insufficient stock for ISBN {}.".format(ISBN))
         else:
             print("ISBN {} not found in inventory.".format(ISBN))
+
+    def get_database_name(self):
+        return self.database_name
+
+    def set_database_name(self, new_database_name):
+        self.database_name = new_database_name
+
+    def close_connection(self):
+        self.connection.close()
                 
 
     
