@@ -30,24 +30,24 @@ class Cart:
             
    def addToCart(self, ISBN, quantity=1):
         try:
-            # Check if the item is available in the inventory
+            # Checks if the item is available in the inventory
             check_inventory = "SELECT quantity FROM inventory WHERE ISBN = ?"
             self.cursor.execute(check_inventory, (ISBN,))
             inventory_quantity = self.cursor.fetchone()
             
             if inventory_quantity and inventory_quantity[0] >= quantity:
-                # Check if item already in cart
+                # Checks if item already in cart
                 check_cart = "SELECT quantity FROM cart WHERE userID = ? AND ISBN = ?"
                 self.cursor.execute(check_cart, (self.userID, ISBN))
                 cart_item = self.cursor.fetchone()
                 
                 if cart_item:
-                    # Update quantity if already in cart
+                    # Updates quantity if already in cart
                     new_quantity = cart_item[0] + quantity
                     update_cart = "UPDATE cart SET quantity = ? WHERE userID = ? AND ISBN = ?"
                     self.cursor.execute(update_cart, (new_quantity, self.userID, ISBN))
                 else:
-                    # Add new item to cart
+                    # Adds new item to cart
                     insert_cart = "INSERT INTO cart (userID, ISBN, quantity) VALUES (?, ?, ?)"
                     self.cursor.execute(insert_cart, (self.userID, ISBN, quantity))
                 
