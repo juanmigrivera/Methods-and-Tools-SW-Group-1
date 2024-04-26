@@ -2,12 +2,13 @@ import sqlite3
 
 class Cart:
     # contructor for cart class
-    def __init__(self, database_Name="methods.db"):
+    def __init__(self, userID, database_Name="methods.db"):
+        self.userID = userID
         self.database_Name = database_Name
         self.connection = sqlite3.connect(database_Name)
         self.cursor = self.connection.cursor()
 
-    def viewCart(self, userID):
+    def viewCart(self):
         try:
             query = 
             """
@@ -16,7 +17,7 @@ class Cart:
             JOIN inventory ON cart.ISBN = inventory.ISBN
             WHERE cart.userID = ?
             """
-            self.cursor.execute(query, (userID,))
+            self.cursor.execute(query, (self.userID,))
             items = self.cursor.fetchall()
             if items:
                 print("Your Cart:")
@@ -25,6 +26,7 @@ class Cart:
             else:
                 print("Your cart is empty.")
         except sqlite3.Error as e:
-            print(f"An error occurred: {e}")
-   def addtoCart(self, userID, ISBN, quantity):
+            print("An error occurred: {e}")
+            
+   def addtoCart(self, ISBN, quantity):
        try:
