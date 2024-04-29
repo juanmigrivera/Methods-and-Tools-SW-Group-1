@@ -66,3 +66,29 @@ class Cart:
             print("Item removed from cart.")
         except sqlite3.Error as e:
             print(f"An error occurred: {e}")
+            
+    def checkOut(self):
+        try:
+            # Begin transaction
+            self.connection.execute("BEGIN")
+            select_query = "SELECT ISBN, quantity FROM cart WHERE userID = ?"
+            self.cursor.execute(select_query, (self.userID,))
+            items = self.cursor.fetchall()
+            
+            if items:
+                for ISBN, quantity in items:
+                    # Update Inventory
+                    update_inventory = "UPDATE inventory SET quantity = quantity - ? WHERE ISBN = ?"
+                    self.cursor.execute(update_inventory, (quantity, ISBN))
+                
+                # Clear cart after checkout
+                clear_cart = "DELETE FROM cart WHERE userID = ?"
+                self.cursor.execute(clear_cart, (self.userID,))
+                self.connection.commit()
+                print("Checkout successful. Cart is now empty.")
+            else:
+                print("No items in cart to checkout.")
+                self.connection.rollback()
+        except sqlite3.Error as e:
+            print(f"An error occurred during checkout: {e}")
+            self.connection.rollback()
