@@ -85,7 +85,7 @@ def mainMenu(user, cart, inventory, history):
             user.displayAccountInfo()
 
         elif(option == "2"):
-            inventory.displayInventory()
+            inventoryMenu(inventory)
 
         elif(option == "3"):
             cart.displayCart()
