@@ -1,4 +1,5 @@
 import sqlite3
+import inventory
 
 class Cart:
     # contructor for cart class
@@ -68,6 +69,9 @@ class Cart:
             print(f"An error occurred: {e}")
             
     def checkOut(self):
+        # Instantiate Inventory with the same database
+        inventory = Inventory(self.database_name)
+
         try:
             # Begin transaction
             self.connection.execute("BEGIN")
@@ -75,20 +79,31 @@ class Cart:
             self.cursor.execute(select_query, (self.userID,))
             items = self.cursor.fetchall()
             
+            all_updated = True
             if items:
                 for ISBN, quantity in items:
-                    # Update Inventory
-                    update_inventory = "UPDATE inventory SET quantity = quantity - ? WHERE ISBN = ?"
-                    self.cursor.execute(update_inventory, (quantity, ISBN))
-                
-                # Clear cart after checkout
-                clear_cart = "DELETE FROM cart WHERE userID = ?"
-                self.cursor.execute(clear_cart, (self.userID,))
-                self.connection.commit()
-                print("Checkout successful. Cart is now empty.")
+                    # Use the decrease_stock method from the Inventory class to update stock
+                    if not inventory.decrease_stock(ISBN, quantity):
+                        all_updated = False
+                        break
+
+                if all_updated:
+                    # Clear cart after successful inventory update and checkout
+                    clear_cart = "DELETE FROM cart WHERE userID = ?"
+                    self.cursor.execute(clear_cart, (self.userID,))
+                    self.connection.commit()
+                    print("Checkout successful. Cart is now empty.")
+                else:
+                    print("Checkout failed due to inventory issues.")
+                    self.connection.rollback()
             else:
                 print("No items in cart to checkout.")
                 self.connection.rollback()
         except sqlite3.Error as e:
             print(f"An error occurred during checkout: {e}")
             self.connection.rollback()
+        finally:
+            inventory.close_connection()
+
+    def close_connection(self):
+        self.connection.close()
