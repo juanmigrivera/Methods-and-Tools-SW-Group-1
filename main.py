@@ -73,6 +73,7 @@ def HistoryMenu(history, user):
         elif option == "1":
             history.viewHistory(user)
         elif option == "2":
+            OrderNumber=input("Enter Order Number: ")
             history.viewOrder(user, OrderNumber)
         else:
             print("That's not a menu option. Please try again.")
@@ -147,7 +148,7 @@ def mainMenu(user, cart, inventory, history):
             cartMenu(cart, user.userID)
 
         elif(option == "4"):
-            HistoryMenu(history, user.userID, )
+            HistoryMenu(history, user.userID)
             
         ## incorrect menu option
         else:
