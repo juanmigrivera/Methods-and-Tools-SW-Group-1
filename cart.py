@@ -30,7 +30,7 @@ class Cart:
         except sqlite3.Error as e:
             print(f"An error occurred: {e}")
             
-   def addToCart(self, ISBN, quantity=1):
+     def addToCart(self, ISBN, quantity=1):
         try:
             # Checks if the item is available in the inventory
             check_inventory = "SELECT quantity FROM inventory WHERE ISBN = ?"
