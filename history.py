@@ -22,7 +22,9 @@ class OrderHistory:
                     print(f"Order Number: {order[0]}, Number of Items: {order[1]}, Cost: {order[2]}, Date: {order[3]}")
             else
                 print("No order history")
-                
+        except:
+            print("Error")
+            
     def viewOrder(self, userID, orderID):
         try:
             query = "SELECT * FROM Orders WHERE UserID = ? AND OrderNumber = ?"
@@ -45,6 +47,8 @@ class OrderHistory:
                     print(f"No items for order ID")
             else:
                 print(f"Order ID does not belong to user")
+        except:
+            print("Error")
                 
     def createOrder(self, userID, quantity, cost, date):
         try:
@@ -58,6 +62,8 @@ class OrderHistory:
             self.cursor.execute(insert_query, (order_number, userID, quantity, cost, date))
             self.connection.commit()
             return order_number
+        except:
+            print("Error")
 
     def addOrderItems(self, userID, orderID):
         try:
@@ -68,6 +74,8 @@ class OrderHistory:
             self.cursor.execute(copy_query, (orderID, userID))
             self.connection.commit()
             print("Order items added successfully")
+        except:
+            print("Error")
 
     def close_connection(self):
         self.connection.close()
