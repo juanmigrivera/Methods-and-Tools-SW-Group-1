@@ -50,23 +50,6 @@ class Inventory:
         else:
             print("ISBN {} not found in inventory.".format(ISBN))
 
-    def increase_stock(self):
-        ISBN=input("Enter the ISBN of the item you want to increase the stock for: ")
-        self.cursor.execute("SELECT * FROM inventory WHERE ISBN=?", (ISBN,))
-        item = self.cursor.fetchone()
-        if item:
-            current_stock=item[7]
-            quantity= int(input("Enter the quantity to decrease: "))
-            if current_stock >= quantity:
-                new_stock= current_stock + quantity
-                self.cursor.execute("UPDATE Inventory SET stock=? WHERE ISBN=?" , (new_stock, ISBN)) 
-                self.connection.commit()
-                print("Stock for ISBN {} increased by {} units.".format(ISBN, quantity))
-            else:
-                print("Insufficient stock for ISBN {}.".format(ISBN))
-        else:
-            print("ISBN {} not found in inventory.".format(ISBN))
-
     def get_database_name(self):
         return self.database_name
 
