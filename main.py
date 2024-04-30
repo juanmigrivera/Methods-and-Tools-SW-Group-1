@@ -31,6 +31,8 @@ def cartMenu(cart):
         print("0. Go Back")
         print("1. View Cart")
         print("2. Add items to cart")
+        print("3. Remove an item from cart")
+        print("4. Checkout")
         option = input("Enter your menu choice: ")
         print()
 
@@ -40,6 +42,10 @@ def cartMenu(cart):
             cart.viewCart()
         elif option == "2":
             cart.addToCart()
+        elif option == "3":
+            cart.removeFromCart()
+        elif option == "4":
+            cart.checkOut()
         else:
             print("That's not a menu option. Please try again.")
 
