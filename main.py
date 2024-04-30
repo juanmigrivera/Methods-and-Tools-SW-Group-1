@@ -12,6 +12,26 @@ def initialMenu():
     inventory = Inventory()
     history = OrderHistory()
 
+def inventoryMenu(inventory):
+    while True:
+        print("Inventory Information Menu:")
+        print("0. Go Back")
+        print("1. View Inventory")
+        print("2. Search Inventory")
+        option = input("Enter your menu choice: ")
+        print()
+
+        if option == "0":
+            break
+        elif option == "1":
+            inventory.view_inventory()
+        elif option == "2":
+            inventory.search_inventory()
+        else:
+            print("That's not a menu option. Please try again.")
+
+        print()
+
     ## initial menu
     while(1):
         print("Pre-Login Menu:")
