@@ -7,7 +7,7 @@ from history import *
 
 def inventoryMenu(inventory):
     while True:
-        print("Inventory Information Menu:")
+        print("Cart Information Menu:")
         print("0. Go Back")
         print("1. View Inventory")
         print("2. Search Inventory")
