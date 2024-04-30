@@ -12,19 +12,15 @@ class Cart:
 
     def viewCart(self):
         try:
-            query = 
-            """
-            SELECT inventory.title, inventory.price, cart.quantity
-            FROM cart
-            JOIN inventory ON cart.ISBN = inventory.ISBN
-            WHERE cart.userID = ?
-            """
+            query = ("SELECT inventory.title, inventory.price, cart.quantity "
+                    "FROM cart JOIN inventory ON cart.ISBN = inventory.ISBN "
+                    "WHERE cart.userID = ?")
             self.cursor.execute(query, (self.userID,))
             items = self.cursor.fetchall()
             if items:
                 print("Your Cart:")
-                for item in items:
-                    print(f"Title: {item[0]}, Price: {item[1]}, Quantity: {item[2]}")
+            for item in items:
+                print(f"Title: {item[0]}, Price: {item[1]}, Quantity: {item[2]}")
             else:
                 print("Your cart is empty.")
         except sqlite3.Error as e:
