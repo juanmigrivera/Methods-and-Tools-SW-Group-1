@@ -4,13 +4,6 @@ from inventory import *
 from history import *
 
 
-## COMPLETE initial pre-login menu
-def initialMenu():
-    ## objects for the classes
-    user = User()
-    cart = Cart()
-    inventory = Inventory()
-    history = OrderHistory()
 
 def inventoryMenu(inventory):
     while True:
@@ -31,6 +24,35 @@ def inventoryMenu(inventory):
             print("That's not a menu option. Please try again.")
 
         print()
+        
+def cartMenu(cart):
+    while True:
+        print("Inventory Information Menu:")
+        print("0. Go Back")
+        print("1. View Cart")
+        print("2. Add items to cart")
+        option = input("Enter your menu choice: ")
+        print()
+
+        if option == "0":
+            break
+        elif option == "1":
+            cart.viewCart()
+        elif option == "2":
+            cart.addToCart()
+        else:
+            print("That's not a menu option. Please try again.")
+
+        print()
+
+
+## COMPLETE initial pre-login menu
+def initialMenu():
+    ## objects for the classes
+    user = User()
+    cart = Cart(userID=12-3456)
+    inventory = Inventory()
+    history = OrderHistory()
 
     ## initial menu
     while(1):
@@ -81,6 +103,7 @@ def mainMenu(user, cart, inventory, history):
             user.logout()
 
             print("Successful logout.")
+            break
         elif(option == "1"):
             user.displayAccountInfo()
 
@@ -88,7 +111,7 @@ def mainMenu(user, cart, inventory, history):
             inventoryMenu(inventory)
 
         elif(option == "3"):
-            cart.displayCart()
+            cartMenu(cart)
 
         elif(option == "4"):
             history.displayOrderHistory(user)
