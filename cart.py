@@ -1,5 +1,6 @@
 import sqlite3
-import inventory
+
+from inventory import Inventory
 
 class Cart:
     # contructor for cart class
