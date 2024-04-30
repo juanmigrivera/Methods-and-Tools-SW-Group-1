@@ -25,7 +25,7 @@ def inventoryMenu(inventory):
 
         print()
         
-def cartMenu(cart):
+def cartMenu(cart, userID):
     while True:
         print("Inventory Information Menu:")
         print("0. Go Back")
@@ -39,7 +39,7 @@ def cartMenu(cart):
         if option == "0":
             break
         elif option == "1":
-            cart.viewCart()
+            cart.viewCart(userID)
         elif option == "2":
             cart.addToCart()
         elif option == "3":
