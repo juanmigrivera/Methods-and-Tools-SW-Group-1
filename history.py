@@ -61,9 +61,15 @@ class OrderHistory:
 
     def addOrderItems(self, userID, orderID):
         try:
-            
+            copy_query = """
+            INSERT INTO OrderItems (OrderNumber, ISBN, Quantity)
+            SELECT ?, ISBN, Quantity FROM Cart WHERE UserID = ?
+            """
+            self.cursor.execute(copy_query, (orderID, userID))
+            self.connection.commit()
+            print("Order items added successfully")
+
+    def close_connection(self):
+        self.connection.close()
     
                 
-        
-                
-            
