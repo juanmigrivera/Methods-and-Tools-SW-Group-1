@@ -10,9 +10,12 @@ class Cart:
 
     def viewCart(self, userID):
         try:
-            query = ("SELECT inventory.title, inventory.price, cart.quantity "
-                     "FROM cart JOIN inventory ON cart.ISBN = inventory.ISBN "
-                     "WHERE cart.userID = ?")
+            query = """
+            SELECT inventory.title, inventory.price, cart.quantity 
+            FROM cart 
+            JOIN inventory ON cart.ISBN = inventory.ISBN 
+            WHERE cart.userID = ?
+            """
             self.cursor.execute(query, (userID,))
             items = self.cursor.fetchall()
 
