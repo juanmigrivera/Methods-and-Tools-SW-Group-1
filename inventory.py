@@ -1,4 +1,5 @@
 import sqlite3
+import inventory
 
 class Inventory:
 
@@ -33,31 +34,42 @@ class Inventory:
             else
                 print("No results found for '{}'.".format(title))
 
-    def decrease_stock(self):
-        ISBN=input("Enter the ISBN of the item you want to decrease the stock for: ")
-        self.cursor.execute("SELECT * FROM inventory WHERE ISBN=?", (ISBN,))
-        item = self.cursor.fetchone()
-        if item:
-            current_stock=item[7]
-            quantity= int(input("Enter the quantity to decrease: "))
-            if current_stock >= quantity:
-                new_stock= current_stock - quantity
-                self.cursor.execute("UPDATE Inventory SET stock=? WHERE ISBN=?" , (new_stock, ISBN)) 
-                self.connection.commit()
-                print("Stock for ISBN {} decreased by {} units.".format(ISBN, quantity))
+    def checkOut(self):
+        inventory = Inventory(self.database_name) 
+
+        try:
+            # Begin transaction
+            self.connection.execute("BEGIN")
+            select_query = "SELECT ISBN, quantity FROM cart WHERE userID = ?"
+            self.cursor.execute(select_query, (self.userID,))
+            items = self.cursor.fetchall()
+            
+            all_updated = True
+            if items:
+                for ISBN, quantity in items:
+                    if not inventory.decrease_stock(ISBN, quantity):
+                        all_updated = False
+                        break
+
+                if all_updated:
+                    # Clear cart after successful inventory update and checkout
+                    clear_cart = "DELETE FROM cart WHERE userID = ?"
+                    self.cursor.execute(clear_cart, (self.userID,))
+                    self.connection.commit()
+                    print("Checkout successful. Cart is now empty.")
+                else:
+                    print("Checkout failed due to inventory issues.")
+                    self.connection.rollback()
             else:
-                print("Insufficient stock for ISBN {}.".format(ISBN))
-        else:
-            print("ISBN {} not found in inventory.".format(ISBN))
-
-    def get_database_name(self):
-        return self.database_name
-
-    def set_database_name(self, new_database_name):
-        self.database_name = new_database_name
+                print("No items in cart to checkout.")
+                self.connection.rollback()
+        except sqlite3.Error as e:
+            print(f"An error occurred during checkout: {e}")
+            self.connection.rollback()
+        finally:
+            inventory.close_connection()  # Close inventory connection to clean up resources
 
     def close_connection(self):
         self.connection.close()
-                
 
     
