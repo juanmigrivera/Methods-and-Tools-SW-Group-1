@@ -9,26 +9,25 @@ class OrderHistory:
         
     def viewHistory(self, userID):
         try:
-            query = """
-            SELECT OrderNumber, ItemNumber, Cost, Date
-            FROM Orders
-            WHERE UserID = ?
-            """
-            self.cursor.execute(query, (userID,))
+            
+            self.cursor.execute(("SELECT * FROM Orders WHERE UserID = ? " ),(userID,))
+            
             orders = self.cursor.fetchall()
-            if orders:
+            if len(orders) > 0:
+                
                 print("Order History:")
                 for order in orders:
-                    print(f"Order Number: {order[0]}, Number of Items: {order[1]}, Cost: {order[2]}, Date: {order[3]}")
+                    print(f"Order Number: {order[0]}, UserID: {order[1]}, Item Number: {order[2]}, Cost: {order[3]}, Date:  {order[4]}")
             else:
                 print("No order history")
         except:
             print("Error")
             
-    def viewOrder(self, userID, orderID):
+    def viewOrder(self, UserID, OrderNumber):
+        
         try:
             query = "SELECT * FROM Orders WHERE UserID = ? AND OrderNumber = ?"
-            self.cursor.execute(query, (userID, orderID))
+            self.cursor.execute(query, (UserID, OrderNumber))
             order = self.cursor.fetchone()
             if order:
                 query = """
@@ -37,10 +36,10 @@ class OrderHistory:
                 JOIN Inventory ON OrderItems.ISBN = Inventory.ISBN
                 WHERE OrderItems.OrderNumber = ?
                 """
-                self.cursor.execute(query, (orderID,))
+                self.cursor.execute(query, (OrderNumber,))
                 order_items = self.cursor.fetchall()
                 if order_items:
-                    print(f"Order items for Order ID {orderID}:")
+                    print(f"Order items for Order ID {OrderNumber}:")
                     for item in order_items:
                         print(f"Title: {item[0]}, Author: {item[1]}, Price: {item[2]}, Quantity: {item[3]}")
                 else:
