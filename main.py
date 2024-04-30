@@ -93,7 +93,7 @@ def initialMenu():
 
 
 ## incomplete main menu...
-def mainMenu(user, cart, inventory, history):
+def mainMenu(user, cart, inventory, history, userID):
     while(user.getLoggedIn()):
         print("Main Menu:")
         print("0. Logout")
@@ -117,7 +117,7 @@ def mainMenu(user, cart, inventory, history):
             inventoryMenu(inventory)
 
         elif(option == "3"):
-            cartMenu(cart)
+            cartMenu(cart, userID)
 
         elif(option == "4"):
             history.displayOrderHistory(user)
