@@ -17,10 +17,16 @@ class Cart:
                     "WHERE cart.userID = ?")
             self.cursor.execute(query, (self.userID,))
             items = self.cursor.fetchall()
+
             if items:
                 print("Your Cart:")
-            for item in items:
-                print(f"Title: {item[0]}, Price: {item[1]}, Quantity: {item[2]}")
+                print('-' * 70)  
+                print(f"{'Title':<30}{'Price':<15}{'Quantity':<15}")
+                print('-' * 70)
+                for item in items:
+                    title, price, quantity = item
+                    print(f"{title:<30}{price:<15}{quantity:<15}")
+                print('-' * 70)
             else:
                 print("Your cart is empty.")
         except sqlite3.Error as e:
