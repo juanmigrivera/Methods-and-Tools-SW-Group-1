@@ -20,7 +20,7 @@ class OrderHistory:
                 print("Order History:")
                 for order in orders:
                     print(f"Order Number: {order[0]}, Number of Items: {order[1]}, Cost: {order[2]}, Date: {order[3]}")
-            else
+            else:
                 print("No order history")
         except:
             print("Error")
