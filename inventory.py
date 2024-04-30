@@ -37,6 +37,10 @@ class Inventory:
     def checkOut(self):
         inventory = Inventory(self.database_name) 
 
+        def checkOut(self):
+        # Instantiate Inventory with the same database
+        inventory = Inventory(self.database_name)
+
         try:
             # Begin transaction
             self.connection.execute("BEGIN")
@@ -47,6 +51,7 @@ class Inventory:
             all_updated = True
             if items:
                 for ISBN, quantity in items:
+                    # Use the decrease_stock method from the Inventory class to update stock
                     if not inventory.decrease_stock(ISBN, quantity):
                         all_updated = False
                         break
@@ -67,7 +72,7 @@ class Inventory:
             print(f"An error occurred during checkout: {e}")
             self.connection.rollback()
         finally:
-            inventory.close_connection()  # Close inventory connection to clean up resources
+            inventory.close_connection()
 
     def close_connection(self):
         self.connection.close()
