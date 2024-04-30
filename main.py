@@ -4,10 +4,11 @@ from inventory import *
 from history import *
 
 
+    
 
 def inventoryMenu(inventory):
     while True:
-        print("Cart Information Menu:")
+        print("Inventory Information Menu:")
         print("0. Go Back")
         print("1. View Inventory")
         print("2. Search Inventory")
@@ -25,23 +26,27 @@ def inventoryMenu(inventory):
 
         print()
         
-def cartMenu(cart, userID):
+def cartMenu(cart):
     while True:
-        print("Inventory Information Menu:")
+        print("Cart Information Menu:")
         print("0. Go Back")
         print("1. View Cart")
         print("2. Add items to cart")
-        print("3. Remove an item from cart")
-        print("4. Checkout")
+        print("3. Remove from cart")
+        print("4. Check out")
+        
+        
         option = input("Enter your menu choice: ")
         print()
 
         if option == "0":
             break
         elif option == "1":
-            cart.viewCart(userID)
+            cart.viewCart(12-3456)
         elif option == "2":
-            cart.addToCart()
+            userID= input("Enter the userID: ")
+            ISBN= input("Enter the ISBN: ")
+            cart.addToCart(userID="?", ISBN= "?")
         elif option == "3":
             cart.removeFromCart()
         elif option == "4":
@@ -51,12 +56,34 @@ def cartMenu(cart, userID):
 
         print()
 
+def UserMenu(user):
+        user.viewAccountInformation()
+        
+def HistoryMenu(history, user):
+    while True:
+        print("History Information Menu:")
+        print("0. Go Back")
+        print("1. View Order History")
+        print("2. View Order")
+        option = input("Enter your menu choice: ")
+        print()
+
+        if option == "0":
+            break
+        elif option == "1":
+            history.viewHistory(user)
+        elif option == "2":
+            history.viewOrder(user, OrderNumber)
+        else:
+            print("That's not a menu option. Please try again.")
+
+        print()
 
 ## COMPLETE initial pre-login menu
 def initialMenu():
     ## objects for the classes
     user = User()
-    cart = Cart(userID=12-3456)
+    cart = Cart()
     inventory = Inventory()
     history = OrderHistory()
 
@@ -93,7 +120,7 @@ def initialMenu():
 
 
 ## incomplete main menu...
-def mainMenu(user, cart, inventory, history, userID):
+def mainMenu(user, cart, inventory, history):
     while(user.getLoggedIn()):
         print("Main Menu:")
         print("0. Logout")
@@ -111,16 +138,16 @@ def mainMenu(user, cart, inventory, history, userID):
             print("Successful logout.")
             break
         elif(option == "1"):
-            user.displayAccountInfo()
+            UserMenu(user)
 
         elif(option == "2"):
             inventoryMenu(inventory)
 
         elif(option == "3"):
-            cartMenu(cart, userID)
+            cartMenu(cart, user.userID)
 
         elif(option == "4"):
-            history.displayOrderHistory(user)
+            HistoryMenu(history, user.userID, )
             
         ## incorrect menu option
         else:
