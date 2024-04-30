@@ -69,11 +69,9 @@ class Cart:
             print(f"An error occurred: {e}")
             
     def checkOut(self):
-        # Instantiate Inventory with the same database
         inventory = Inventory(self.database_name)
 
         try:
-            # Begin transaction
             self.connection.execute("BEGIN")
             select_query = "SELECT ISBN, quantity FROM cart WHERE userID = ?"
             self.cursor.execute(select_query, (self.userID,))
@@ -82,28 +80,23 @@ class Cart:
             all_updated = True
             if items:
                 for ISBN, quantity in items:
-                    # Use the decrease_stock method from the Inventory class to update stock
                     if not inventory.decrease_stock(ISBN, quantity):
                         all_updated = False
                         break
 
                 if all_updated:
-                    # Clear cart after successful inventory update and checkout
                     clear_cart = "DELETE FROM cart WHERE userID = ?"
                     self.cursor.execute(clear_cart, (self.userID,))
                     self.connection.commit()
                     print("Checkout successful. Cart is now empty.")
                 else:
-                    print("Checkout failed due to inventory issues.")
                     self.connection.rollback()
+                    print("Checkout failed due to inventory issues.")
             else:
-                print("No items in cart to checkout.")
                 self.connection.rollback()
+                print("No items in cart to checkout.")
         except sqlite3.Error as e:
-            print(f"An error occurred during checkout: {e}")
             self.connection.rollback()
+            print(f"An error occurred during checkout: {e}")
         finally:
             inventory.close_connection()
-
-    def close_connection(self):
-        self.connection.close()
