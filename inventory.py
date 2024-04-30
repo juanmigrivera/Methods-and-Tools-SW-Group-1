@@ -36,22 +36,32 @@ class Inventory:
             else
                 print("No results found for '{}'.".format(title))
 
-    def decrease_stock(self):
-        ISBN=input("Enter the ISBN of the item you want to decrease the stock for: ")
-        self.cursor.execute("SELECT * FROM inventory WHERE ISBN=?", (ISBN,))
+    def decrease_stock(self, ISBN=None, quantity=None):
+    if ISBN is None:
+        ISBN = input("Enter the ISBN of the item you want to decrease the stock for: ")
+    if quantity is None:
+        quantity = int(input("Enter the quantity to decrease: "))
+
+    try:
+        self.cursor.execute("SELECT stock FROM Inventory WHERE ISBN=?", (ISBN,))
         item = self.cursor.fetchone()
         if item:
-            current_stock=item[7]
-            quantity= int(input("Enter the quantity to decrease: "))
+            current_stock = item[0]
             if current_stock >= quantity:
-                new_stock= current_stock - quantity
-                self.cursor.execute("UPDATE Inventory SET stock=? WHERE ISBN=?" , (new_stock, ISBN)) 
+                new_stock = current_stock - quantity
+                self.cursor.execute("UPDATE Inventory SET stock=? WHERE ISBN=?", (new_stock, ISBN))
                 self.connection.commit()
-                print("Stock for ISBN {} decreased by {} units.".format(ISBN, quantity))
+                print(f"Stock for ISBN {ISBN} decreased by {quantity} units.")
+                return True
             else:
-                print("Insufficient stock for ISBN {}.".format(ISBN))
+                print(f"Insufficient stock for ISBN {ISBN}.")
+                return False
         else:
-            print("ISBN {} not found in inventory.".format(ISBN))
+            print(f"ISBN {ISBN} not found in inventory.")
+            return False
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return False
 
     def get_database_name(self):
         return self.database_name
