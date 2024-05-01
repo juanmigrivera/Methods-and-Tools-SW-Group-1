@@ -26,7 +26,7 @@ def inventoryMenu(inventory):
 
         print()
         
-def cartMenu(cart, user):
+def cartMenu(cart, user, inventory, history):
     while True:
         print("Cart Information Menu:")
         print("0. Go Back")
@@ -50,7 +50,7 @@ def cartMenu(cart, user):
            ISBN= input("Enter the ISBN of the book you want to remove: ")
            cart.removeFromCart(user, ISBN)
         elif option == "4":
-            cart.checkOut()
+            cart.checkOut(user)
         else:
             print("That's not a menu option. Please try again.")
 
@@ -145,7 +145,7 @@ def mainMenu(user, cart, inventory, history):
             inventoryMenu(inventory)
 
         elif(option == "3"):
-            cartMenu(cart, user.userID)
+            cartMenu(cart, user.userID, inventory, history)
 
         elif(option == "4"):
             HistoryMenu(history, user.userID)
