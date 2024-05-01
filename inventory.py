@@ -41,22 +41,26 @@ class Inventory:
         else:
             print("No results found for '{}'.".format(title))
 
-    def decrease_stock(self):
-        ISBN= input("Enter the ISBN of the item you want to decrease the stock for: ")
-        self.cursor.execute("SELECT * FROM inventory WHERE ISBN=?", (ISBN,))
-        item = self.cursor.fetchone()
-        if item:
-            current_stock = item[7]  
-            quantity = int(input("Enter the quantity to decrease: "))
-            if current_stock >= quantity:
-                new_stock = current_stock - quantity
-                self.cursor.execute("UPDATE Inventory SET stock=? WHERE ISBN=?", (new_stock, ISBN))
-                self.connection.commit()
-                print("Stock for ISBN {} decreased by {} units.".format(ISBN, quantity))
+    def decrease_stock(self, ISBN, quantity=1):
+        try:
+            self.cursor.execute("SELECT * FROM inventory WHERE ISBN=?", (ISBN,))
+            item = self.cursor.fetchone()
+            if item:
+                current_stock = item[7]  
+                if current_stock >= quantity:
+                    new_stock = current_stock - quantity
+                    self.cursor.execute("UPDATE Inventory SET stock=? WHERE ISBN=?", (new_stock, ISBN))
+                    self.connection.commit()
+                    print("Stock for ISBN {} decreased by {} units.".format(ISBN, quantity))
+                    return True
+                else:
+                    print("Insufficient stock for ISBN {}.".format(ISBN))
+                    return False
             else:
-                print("Insufficient stock for ISBN {}.".format(ISBN))
-        else:
-            print("ISBN {} not found in inventory.".format(ISBN))
+                print("ISBN {} not found in inventory.".format(ISBN))
+                return False
+        except sqlite3.Error as e:
+            print(f"An error occurred while decreasing stock: {e}")
 
     
 
@@ -66,9 +70,6 @@ class Inventory:
 
     def set_database_name(self, new_database_name):
         self.database_name = new_database_name
-
-    def close_connection(self):
-        self.connection.close()
 
     
 
