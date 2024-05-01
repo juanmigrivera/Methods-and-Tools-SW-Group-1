@@ -1,6 +1,7 @@
 import sqlite3
-
+from datetime import datetime
 from inventory import Inventory
+from history import OrderHistory
 
 class Cart:
     def __init__(self, database_name="methods.db"):
@@ -8,7 +9,11 @@ class Cart:
         self.connection = sqlite3.connect(database_name)
         self.cursor = self.connection.cursor()
 
+ 
+            
     def viewCart(self, userID):
+        
+        
         try:
             query = """
             SELECT inventory.title, inventory.price, cart.quantity 
@@ -16,7 +21,7 @@ class Cart:
             JOIN inventory ON cart.ISBN = inventory.ISBN 
             WHERE cart.userID = ?
             """
-            self.cursor.execute(query, (userID,))
+            self.cursor.execute(query,(userID,))
             items = self.cursor.fetchall()
 
             if items:
@@ -35,7 +40,7 @@ class Cart:
 
     def addToCart(self, userID, ISBN, quantity=1):
         try:
-            check_inventory = "SELECT quantity FROM inventory WHERE ISBN = ?"
+            check_inventory = "SELECT stock FROM inventory WHERE ISBN = ?"
             self.cursor.execute(check_inventory, (ISBN,))
             inventory_quantity = self.cursor.fetchone()
             
@@ -69,34 +74,46 @@ class Cart:
             print(f"An error occurred: {e}")
             
     def checkOut(self, userID):
-        inventory = Inventory(self.database_name)
+        
 
+        
         try:
-            self.connection.execute("BEGIN")
+            inventory=Inventory()
+            history=OrderHistory()
+
             select_query = "SELECT ISBN, quantity FROM cart WHERE userID = ?"
             self.cursor.execute(select_query, (userID,))
             items = self.cursor.fetchall()
             
-            all_updated = True
-            if items:
-                for ISBN, quantity in items:
-                    if not inventory.decrease_stock(ISBN, quantity):
-                        all_updated = False
-                        break
-
-                if all_updated:
-                    clear_cart = "DELETE FROM cart WHERE userID = ?"
-                    self.cursor.execute(clear_cart, (userID,))
-                    self.connection.commit()
-                    print("Checkout successful. Cart is now empty.")
-                else:
-                    self.connection.rollback()
-                    print("Checkout failed due to inventory issues.")
-            else:
-                self.connection.rollback()
-                print("No items in cart to checkout.")
+            if not items:
+                print("Your cart is empty. There is nothing to checkout.")
+                return 
+           
+            
+            total_cost = 0
+            current_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            
+            for item in items:
+                ISBN, quantity=item
+                book_query = "SELECT price FROM inventory WHERE ISBN = ?"
+                self.cursor.execute(book_query, (ISBN,))
+                price=self.cursor.fetchone()[0]
+                total_cost+= price * quantity
+                inventory.decrease_stock(ISBN, quantity)
+                
+            order_number=history.createOrder(userID, len(items), total_cost, current_date)
+            
+            history.addOrderItems(userID, order_number)
+            
+            delete_query = "DELETE FROM cart WHERE userID= ?"
+            self.cursor.execute(delete_query, (userID,))
+            self.connection.commit()
+            
+            print("Checkout successful.")
+            
         except sqlite3.Error as e:
-            self.connection.rollback()
-            print(f"An error occurred during checkout: {e}")
-        finally:
-            inventory.close_connection()
+            print(f"An error occured during checkout: {e}")
+        
+            
+    def close_connection(self):
+        self.connection.close()
